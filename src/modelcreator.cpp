@@ -14,6 +14,7 @@ void ModelCreator::createFile()
     try
     {
         boost::filesystem::ofstream(path + "/Models/" + processName + "/src/" + processName+".cpp");
+        boost::filesystem::ofstream(path + "/Models/" + processName + "/src/main.cpp");
         boost::filesystem::ofstream(path + "/Models/" + processName + "/incl/" + processName+".h");
 
         isSuccess = true;
@@ -34,6 +35,8 @@ void ModelCreator::createFile()
         std::cout << "Struct " + processName + " successfully written to data.h" << std::endl;
         createCmakeFile();
         std::cout << "CMakeLists.txt successfully written" << std::endl;
+        writeMainFile();
+        std::cout << "main.cpp successfully written" << std::endl;
     }
 }
 
@@ -118,8 +121,8 @@ void ModelCreator::writeSourceFile()
     std::string fileContent = "";
     std::string currentIndent = "";
 
-    fileContent += "#include \"" + modelName + ".h\"\n";
-    fileContent += "using namespace ugv\n";
+    fileContent += "#include \"" + modelName + ".h\"\n\n";
+    fileContent += "using namespace ugv;\n\n";
 
     fileContent += modelName + "::" + modelName + "(int id, const std::string& name, int duration) : BaseProcess(id, name, duration), data(nullptr)\n{\n";
     currentIndent += "  ";
@@ -214,4 +217,24 @@ void ModelCreator::addStructToDataClass()
     {
         std::cout << "Could not find data.h; Searched in: " << path + "/incl/data.h" << std::endl;
     }
+}
+
+void ModelCreator::writeMainFile()
+{
+    std::string fileContent = "";
+    std::string currentIndent = "";
+
+    //Includes
+    fileContent += "#include \"steering.h\"\n\n";
+    fileContent += "int main(int argc, char* argv[])\n";
+    fileContent += "{\n";
+    currentIndent += " ";
+    fileContent += currentIndent + "SteeringModel model\n";
+    fileContent += currentIndent + "model.initData();\n";
+    currentIndent = "";
+    fileContent += "}";
+
+    std::ofstream mainFile(path + "/Models/" + processName + "/src/main.cpp");
+    mainFile << fileContent;
+    mainFile.close();
 }

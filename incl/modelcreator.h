@@ -27,6 +27,7 @@ private:
     void writeSourceFile();
     void addStructToDataClass();
     void createCmakeFile();
+    void writeMainFile();
 
     //Helper-classes
 };
