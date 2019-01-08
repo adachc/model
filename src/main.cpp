@@ -1,38 +1,61 @@
 #include <iostream>
 #include <string.h>
 #include <stdio.h>
+#include <string.h>
+#include <boost/program_options.hpp>
 #include "modelcreator.h"
 
 /*
  *
- * Dateiname und Pfad aus Config-File
- * Ordern erstellen (Model)
- * Skelett erstellen
- * CMake erstellen
- *
- *
- * TODO:
- *  - Main
- *  - ConfigFile
+ * Program options für:
+ *  - Name Simulation (?)
+ *  - Name Model
  *
  * */
 
-int main()
-{
-    std::cout << "Generate Model: " << std::endl;
-    std::string path = "/home/matthias/Test";
-    std::string processName = "Steering";
+namespace po = boost::program_options;
 
-    ModelCreator mc(path, processName);
-    bool isFilesGeneratedOk = false;
-    isFilesGeneratedOk = mc.createFolders();
-    if(isFilesGeneratedOk)
+int main(int argc, char* argv[])
+{
+    po::options_description desc("Allowed options");
+    desc.add_options()
+            ("simulationName", po::value<std::string>(), "Name of the Simulation this model will be part of")
+            ("modelName", po::value<std::string>(), "Name of the model");
+
+    po::variables_map vm;
+    po::store(po::parse_command_line(argc, argv, desc), vm);
+    po::notify(vm);
+
+    if(vm.count("simulationName"))
     {
-        mc.createFile();
+        if(vm.count("modelName"))
+        {
+            std::string simulationName = vm["simulationName"].as<std::string>();
+            std::string processName = vm["modelName"].as<std::string>();
+
+            std::cout << "Generate Model: " << std::endl;
+            std::string path = "~/Test";
+
+            ModelCreator mc(path, processName);
+            bool isFilesGeneratedOk = false;
+            isFilesGeneratedOk = mc.createFolders();
+            if(isFilesGeneratedOk)
+            {
+                mc.createFile();
+            }
+            else
+            {
+                std::cout << "Did not create files because folders were not created successfully" << std::endl;
+            }
+        }
+        else
+        {
+            std::cout << "Modelname was not set, --modelName <name> required" << std::endl;
+        }
     }
     else
     {
-        std::cout << "Did not create files because folders were not created successfully" << std::endl;
+        std::cout << "Simulationname was not set, --simulationName <name> required" << std::endl;
     }
 
     return 0;
