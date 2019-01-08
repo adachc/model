@@ -82,7 +82,7 @@ void ModelCreator::writeHeaderFile()
     fileContent += "#define " + capsModelName + "_H" + "\n\n";
 
     //Includes
-    fileContent += "#include  \"../incl/baseprocess.h\"\n"; //wahrscheinlich falsch (Pfad)
+    fileContent += "#include  \"../../../incl/baseprocess.h\"\n";
 
     fileContent += "\n";
 
@@ -103,9 +103,12 @@ void ModelCreator::writeHeaderFile()
     //Private
     currentIndent = currentIndent.substr(0, currentIndent.size()-2);
     fileContent += currentIndent + "private:\n";
+    currentIndent += "  ";
+    fileContent += currentIndent + "ugvdata::" + processName + "* data;\n";
+    currentIndent = currentIndent.substr(0, currentIndent.size()-2);
 
     currentIndent = currentIndent.substr(0, currentIndent.size()-2);
-    fileContent += currentIndent + "}\n";
+    fileContent += currentIndent + "};\n";
     currentIndent = currentIndent.substr(0, currentIndent.size()-2);
     fileContent += currentIndent + "}\n";
 
@@ -121,7 +124,7 @@ void ModelCreator::writeSourceFile()
     std::string fileContent = "";
     std::string currentIndent = "";
 
-    fileContent += "#include \"" + modelName + ".h\"\n\n";
+    fileContent += "#include \"" + processName + ".h\"\n\n";
     fileContent += "using namespace ugv;\n\n";
 
     fileContent += modelName + "::" + modelName + "(int id, const std::string& name, int duration) : BaseProcess(id, name, duration), data(nullptr)\n{\n";
@@ -130,10 +133,10 @@ void ModelCreator::writeSourceFile()
     currentIndent = currentIndent.substr(0, currentIndent.size()-2);
     fileContent += "}\n\n";
 
-    fileContent += modelName + "::" + "initData()\n{\n";
+    fileContent += "void " + modelName + "::" + "initData()\n{\n";
     currentIndent += "  ";
     fileContent += currentIndent + "debug(\"initData start ... \");\n";
-    fileContent += currentIndent + "data = shmSegment->construct<ugvdata::" + modelName + ">(getName().c_str())();\n";
+    fileContent += currentIndent + "data = shmSegment->construct<ugvdata::" + processName + ">(getName().c_str())();\n";
     fileContent += currentIndent + "if(data == nullptr)\n";
     currentIndent += "  ";
     fileContent += currentIndent + "debug(\"data is null\");\n\n";
@@ -225,12 +228,13 @@ void ModelCreator::writeMainFile()
     std::string currentIndent = "";
 
     //Includes
-    fileContent += "#include \"steering.h\"\n\n";
+    fileContent += "#include \"" + processName + ".h\"\n\n";
     fileContent += "int main(int argc, char* argv[])\n";
     fileContent += "{\n";
-    currentIndent += " ";
-    fileContent += currentIndent + "SteeringModel model\n";
-    fileContent += currentIndent + "model.initData();\n";
+    currentIndent += "  ";
+    fileContent += currentIndent +  modelName + " model;\n";
+    fileContent += currentIndent + "model.initData();\n\n";
+    fileContent += currentIndent + "return 0;\n";
     currentIndent = "";
     fileContent += "}";
 
