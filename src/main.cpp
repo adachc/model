@@ -20,7 +20,8 @@ int main(int argc, char* argv[])
     po::options_description desc("Allowed options");
     desc.add_options()
             ("simulationName", po::value<std::string>(), "Name of the Simulation this model will be part of")
-            ("modelName", po::value<std::string>(), "Name of the model");
+            ("modelName", po::value<std::string>(), "Name of the model")
+            ("path", po::value<std::string>(), "Path in which the Simulation is located");
 
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -30,22 +31,29 @@ int main(int argc, char* argv[])
     {
         if(vm.count("modelName"))
         {
-            std::string simulationName = vm["simulationName"].as<std::string>();
-            std::string processName = vm["modelName"].as<std::string>();
-
-            std::cout << "Generate Model: " << std::endl;
-            std::string path = "~/Test";
-
-            ModelCreator mc(path, processName);
-            bool isFilesGeneratedOk = false;
-            isFilesGeneratedOk = mc.createFolders();
-            if(isFilesGeneratedOk)
+            if(vm.count("path"))
             {
-                mc.createFile();
+                std::string simulationName = vm["simulationName"].as<std::string>();
+                std::string processName = vm["modelName"].as<std::string>();
+                std::string path = vm["path"].as<std::string>();
+
+                std::cout << "Generate Model: " << std::endl;
+
+                ModelCreator mc(path, processName);
+                bool isFilesGeneratedOk = false;
+                isFilesGeneratedOk = mc.createFolders();
+                if(isFilesGeneratedOk)
+                {
+                    mc.createFile();
+                }
+                else
+                {
+                    std::cout << "Did not create files because folders were not created successfully" << std::endl;
+                }
             }
             else
             {
-                std::cout << "Did not create files because folders were not created successfully" << std::endl;
+                std::cout << "Path was not set, --path <path> required" << std::endl;
             }
         }
         else
