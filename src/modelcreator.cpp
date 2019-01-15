@@ -13,9 +13,9 @@ void ModelCreator::createFile()
 
     try
     {
-        boost::filesystem::ofstream(path + "/Models/" + processName + "/src/" + processName+".cpp");
+        boost::filesystem::ofstream(path + "/Models/" + processName + "/src/" + modelName+".cpp");
         boost::filesystem::ofstream(path + "/Models/" + processName + "/src/main.cpp");
-        boost::filesystem::ofstream(path + "/Models/" + processName + "/incl/" + processName+".h");
+        boost::filesystem::ofstream(path + "/Models/" + processName + "/incl/" + modelName+".h");
 
         isSuccess = true;
     }
@@ -114,7 +114,7 @@ void ModelCreator::writeHeaderFile()
 
     fileContent += "#endif // " + capsModelName + "_H";
 
-    std::ofstream headerFile(path + "/Models/" + processName + "/incl/"+processName+".h");
+    std::ofstream headerFile(path + "/Models/" + processName + "/incl/"+modelName+".h");
     headerFile << fileContent;
     headerFile.close();
 }
@@ -124,7 +124,7 @@ void ModelCreator::writeSourceFile()
     std::string fileContent = "";
     std::string currentIndent = "";
 
-    fileContent += "#include \"" + processName + ".h\"\n\n";
+    fileContent += "#include \"" + modelName + ".h\"\n\n";
     fileContent += "using namespace ugv;\n\n";
 
     fileContent += modelName + "::" + modelName + "(int id, const std::string& name, int duration) : BaseProcess(id, name, duration), data(nullptr)\n{\n";
@@ -149,7 +149,7 @@ void ModelCreator::writeSourceFile()
     fileContent += "void " + modelName + "::update()\n{";
     fileContent += "}";
 
-    std::ofstream sourceFile(path + "/Models/" + processName + "/src/"+processName+".cpp");
+    std::ofstream sourceFile(path + "/Models/" + processName + "/src/"+modelName+".cpp");
     sourceFile << fileContent;
     sourceFile.close();
 }
