@@ -147,7 +147,9 @@ void ModelCreator::writeSourceFile()
     fileContent += "}\n\n";
 
     fileContent += "void " + modelName + "::update()\n{";
-    fileContent += "}";
+    fileContent += "}\n";
+
+    fileContent += modelName + "::~" + modelName + "() {}";
 
     std::ofstream sourceFile(path + "/Models/" + processName + "/src/"+modelName+".cpp");
     sourceFile << fileContent;
@@ -228,11 +230,11 @@ void ModelCreator::writeMainFile()
     std::string currentIndent = "";
 
     //Includes
-    fileContent += "#include \"" + processName + ".h\"\n\n";
+    fileContent += "#include \"../incl/" + modelName + ".h\" \n\n";
     fileContent += "int main(int argc, char* argv[])\n";
     fileContent += "{\n";
     currentIndent += "  ";
-    fileContent += currentIndent +  modelName + " model;\n";
+    fileContent += currentIndent + "ugv::" + modelName + " model(0,\"test\");\n";
     fileContent += currentIndent + "model.initData();\n\n";
     fileContent += currentIndent + "return 0;\n";
     currentIndent = "";
